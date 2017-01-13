@@ -6,7 +6,7 @@
  * */
 
 // O(n^2) sort
-// O(n*logn) sort
+// O(n*logn) Comparison sort
 template<typename T>
 void mergeSort(std::vector<T>& A);
 
@@ -30,3 +30,5 @@ void quickSort(std::vector<T>& A, int lo, int hi);
 #include "quickSort.h"
 
 // O(n) sort
+void countingSort(std::vector<int>& A); // assumption: A in [0,k] k = O(A.size())
+void bucketSort(std::vector<double>& A);   // assumption: A in [0,1)
