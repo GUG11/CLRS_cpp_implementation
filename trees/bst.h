@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdlib>
+#include <stack>
 #include "visitor.h"
 
 enum NodeColor {RED, BLACK};
@@ -27,6 +28,8 @@ public:
     // traverse
     void inorderTreeWalk(BSTNode<Key>* x, Visitor<Key>& visitor);
     void inorderTreeWalk(Visitor<Key>& visitor) {inorderTreeWalk(root, visitor);}
+    void inorderIteratively(BSTNode<Key>* x, Visitor<Key>& visitor);
+    void inorderIteratively(Visitor<Key>& visitor) {inorderIteratively(root, visitor);}
     // Accessors
     BSTNode<Key>* getRoot() {return root;}
     BSTNode<Key>* search(Key key);
@@ -49,6 +52,22 @@ void BST<Key>::inorderTreeWalk(BSTNode<Key>* x, Visitor<Key>& visitor) {
         inorderTreeWalk(x->left, visitor);
         visitor(x->key);
         inorderTreeWalk(x->right, visitor);
+    }
+}
+
+template<typename Key>
+void BST<Key>::inorderIteratively(BSTNode<Key>* x, Visitor<Key>& visitor) {
+    std::stack<BSTNode<Key>*> S;
+    if (x) {
+        do {
+            while (x) {
+                S.push(x);
+                x = x->left;
+            }
+            x = S.top(); S.pop();
+            visitor(x->key);
+            x = x->right;
+        } while (!S.empty() || x);
     }
 }
 

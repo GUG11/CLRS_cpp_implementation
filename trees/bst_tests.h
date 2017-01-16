@@ -81,11 +81,19 @@ public:
         for (int i = 0; i < int(bv.buf.size()) - 1; i++) {
             TS_ASSERT(bv.buf[i] < bv.buf[i+1]);
         }
+        bv.buf.clear();
+        completeTree.inorderIteratively(bv);
+        TS_ASSERT_EQUALS(bv.buf.size(), 15);
+        for (int i = 0; i < int(bv.buf.size()) - 1; i++) {
+            TS_ASSERT(bv.buf[i] < bv.buf[i+1]);
+        }
     }
 
     void testInorder2(void) { // null tree
         BufferVisitor<int> bv;
         emptyTree.inorderTreeWalk(bv);
+        TS_ASSERT(bv.buf.empty());
+        emptyTree.inorderIteratively(bv);
         TS_ASSERT(bv.buf.empty());
     }
 
@@ -98,6 +106,12 @@ public:
     void testInorder3(void) {
         BufferVisitor<int> bv;
         generalTree.inorderTreeWalk(bv);
+        TS_ASSERT_EQUALS(bv.buf.size(), 9);
+        for (int i = 0; i < int(bv.buf.size()) - 1; i++) {
+            TS_ASSERT(bv.buf[i] < bv.buf[i+1]);
+        }
+        bv.buf.clear();
+        generalTree.inorderIteratively(bv);
         TS_ASSERT_EQUALS(bv.buf.size(), 9);
         for (int i = 0; i < int(bv.buf.size()) - 1; i++) {
             TS_ASSERT(bv.buf[i] < bv.buf[i+1]);
