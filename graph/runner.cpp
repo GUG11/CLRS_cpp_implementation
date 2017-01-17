@@ -69,5 +69,11 @@ public:
  void runTest() { suite_TestGraph.test_topo_sort_direct(); }
 } testDescription_suite_TestGraph_test_topo_sort_direct;
 
+static class TestDescription_suite_TestGraph_test_scc : public CxxTest::RealTestDescription {
+public:
+ TestDescription_suite_TestGraph_test_scc() : CxxTest::RealTestDescription( Tests_TestGraph, suiteDescription_TestGraph, 235, "test_scc" ) {}
+ void runTest() { suite_TestGraph.test_scc(); }
+} testDescription_suite_TestGraph_test_scc;
+
 #include <cxxtest/Root.cpp>
 const char* CxxTest::RealWorldDescription::_worldName = "cxxtest";

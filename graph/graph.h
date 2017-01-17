@@ -15,23 +15,26 @@ struct Vertex {
     N data;
     std::unordered_map<int, E> adj;
     int parent, distance;   // Parent in graph traversal, distance from the source
+    int dtime, ftime;   // discover time, finish time (for DFS)
     Status status;
-    Vertex(const N& d) : data(d), parent(-1), distance(-1) {}
+    Vertex(const N& d) : data(d), parent(-1), distance(-1), dtime(-1), ftime(-1) {}
+    E operator [] (int id) {return adj[id];}   // G[i][j] get edge data of (i,j)
 };
 
 template <typename N, typename E>
 class Graph {
 protected:
     std::unordered_map<int, Vertex<N,E>*> V;    // int store the id of a vertex
-    bool topoSortOn;
     size_t numEdges;
-    std::vector<int> permVertexes;
+    int time;
+    void searchInit(int id);
     void DFS(int id, Visitor<N>& visitor);
 public: 
-    Graph(): topoSortOn(false), numEdges(0) {}
+    Graph(): numEdges(0), time(0) {}
     virtual ~Graph() {clear();}
     Vertex<N,E>* operator [] (int id) {return V.find(id) == V.end() ? NULL : V[id];}
     size_t getNumNodes() {return V.size();}
+    std::vector<int> getNodeIds();
     size_t getNumEdges() {return numEdges;}
     bool addNode(int id, const N& data);
     virtual bool addEdge(int uid, int vid, const E& e) = 0;
@@ -40,7 +43,6 @@ public:
     void BFS(int id, Visitor<N>& visitor);
     std::vector<int> shortestPath(int src, int dst);
     void DFS(Visitor<N>& visitor);
-    std::vector<int> topologicalSort();
     void clear();
 };
 
@@ -52,6 +54,13 @@ void Graph<N,E>::clear() {
 }
 
 template <typename N, typename E>
+std::vector<int> Graph<N,E>::getNodeIds() {
+    std::vector<int> nids;
+    for (auto& e: V) nids.push_back(e.first);
+    return nids;
+}
+
+template <typename N, typename E>
 bool Graph<N,E>::addNode(int id, const N& data) {
     if (V.find(id) != V.end()) return false;
     V[id] = new Vertex<N,E>(data);
@@ -59,13 +68,17 @@ bool Graph<N,E>::addNode(int id, const N& data) {
 }
 
 template <typename N, typename E>
-void Graph<N,E>::BFS(int id, Visitor<N>& visitor) {
-    // initialization
+void Graph<N,E>::searchInit(int id) {
     for (auto v: V) {
         v.second->parent = -1;
         v.second->distance = v.first == id ? 0 : -1;
         v.second->status = UNDISCOVERED;
     } 
+}
+
+template <typename N, typename E>
+void Graph<N,E>::BFS(int id, Visitor<N>& visitor) {
+    searchInit(id); // initialization
     std::queue<int> Q;
     // bfs
     if (V.find(id) != V.end()) {
@@ -107,11 +120,8 @@ std::vector<int> Graph<N,E>::shortestPath(int src, int dst) {
 
 template <typename N, typename E>
 void Graph<N,E>::DFS(Visitor<N>& visitor) {
-    // initialization
-    for (auto& u : V) {
-        u.second->status = UNDISCOVERED;
-        u.second->parent = -1;
-    }
+    searchInit(-1); // initialization
+    time = 0;
     for (auto& u : V) {
         if (u.second->status == UNDISCOVERED) DFS(u.first, visitor);
     }
@@ -120,6 +130,7 @@ void Graph<N,E>::DFS(Visitor<N>& visitor) {
 template <typename N, typename E>
 void Graph<N,E>::DFS(int id, Visitor<N>& visitor) {
     V[id]->status = DISCOVERED;
+    V[id]->dtime = ++time;
     for (auto& v : V[id]->adj) {
         if (V[v.first]->status == UNDISCOVERED) {
             V[v.first]->parent = id;
@@ -127,17 +138,7 @@ void Graph<N,E>::DFS(int id, Visitor<N>& visitor) {
         }
     }
     visitor(V[id]->data);
-    if (topoSortOn) permVertexes.push_back(id);
     V[id]->status = VISITED;
+    V[id]->ftime = ++time;
 }
 
-template <typename N, typename E>
-std::vector<int> Graph<N,E>::topologicalSort() {
-    topoSortOn = true;
-    NilVisitor<N> visitor;
-    permVertexes.clear();
-    DFS(visitor);
-    std::reverse(permVertexes.begin(), permVertexes.end());
-    topoSortOn = false;
-    return permVertexes;
-}
