@@ -266,4 +266,195 @@ public:
             }
         }
     }
+
+    /**
+     *      1 --(8)-- 2 --(7)-- 4
+     *    / |       /   \       | \
+     *  (4) |     (2)    \      | (9)
+     *  /   |     /       \     |   \
+     * 0   (11)  3        (4) (14)   5
+     *  \   |   / \         \   |   /
+     *  (8) | (7) (6)        \  | (10)
+     *    \ | /     \         \ | /
+     *      8 --(1)-- 7 --(2)-- 6
+     * */
+    void test_mst_prim() {
+        std::vector<Edge<int>> mstEdges;
+        for (int i = 0; i < 9; i++) { Gu.addNode(i, i); }
+        Gu.addEdge(0, 1, 4);
+        Gu.addEdge(1, 2, 8);
+        Gu.addEdge(2, 4, 7);
+        Gu.addEdge(2, 3, 2);
+        Gu.addEdge(1, 8, 11);
+        Gu.addEdge(0, 8, 8);
+        Gu.addEdge(2, 6, 4);
+        Gu.addEdge(3, 8, 7);
+        Gu.addEdge(3, 7, 6);
+        Gu.addEdge(4, 5, 9);
+        Gu.addEdge(4, 6, 14);
+        Gu.addEdge(5, 6, 10);
+        Gu.addEdge(6, 7, 2);
+        Gu.addEdge(7, 8, 1);
+        mstEdges = Gu.MSTPrim();
+        // check the tree
+        UnGraph<int, int> mstTree;
+        for (int i = 0; i < 9; i++) { Gu.addNode(i, i); }
+        for (auto& e: mstEdges) mstTree.addEdge(e);
+        TS_ASSERT_EQUALS(mstTree[0]->adj.size(), 1);
+        TS_ASSERT_DIFFERS(mstTree[0]->adj.find(1), mstTree[0]->adj.end());
+        TS_ASSERT_EQUALS(mstTree[1]->adj.size(), 2);
+        TS_ASSERT_DIFFERS(mstTree[1]->adj.find(2), mstTree[1]->adj.end());
+        TS_ASSERT_EQUALS(mstTree[2]->adj.size(), 4);
+        TS_ASSERT_DIFFERS(mstTree[2]->adj.find(3), mstTree[2]->adj.end());
+        TS_ASSERT_DIFFERS(mstTree[2]->adj.find(4), mstTree[2]->adj.end());
+        TS_ASSERT_DIFFERS(mstTree[2]->adj.find(6), mstTree[2]->adj.end());
+        TS_ASSERT_EQUALS(mstTree[4]->adj.size(), 2);
+        TS_ASSERT_DIFFERS(mstTree[4]->adj.find(5), mstTree[4]->adj.end());
+        TS_ASSERT_EQUALS(mstTree[6]->adj.size(), 2);
+        TS_ASSERT_DIFFERS(mstTree[6]->adj.find(7), mstTree[6]->adj.end());
+        TS_ASSERT_EQUALS(mstTree[7]->adj.size(), 2);
+        TS_ASSERT_DIFFERS(mstTree[7]->adj.find(8), mstTree[7]->adj.end());
+    }
+
+    void test_mst_kruskal() {
+        std::vector<Edge<int>> mstEdges;
+        for (int i = 0; i < 9; i++) { Gu.addNode(i, i); }
+        Gu.addEdge(0, 1, 4);
+        Gu.addEdge(1, 2, 8);
+        Gu.addEdge(2, 4, 7);
+        Gu.addEdge(2, 3, 2);
+        Gu.addEdge(1, 8, 11);
+        Gu.addEdge(0, 8, 8);
+        Gu.addEdge(2, 6, 4);
+        Gu.addEdge(3, 8, 7);
+        Gu.addEdge(3, 7, 6);
+        Gu.addEdge(4, 5, 9);
+        Gu.addEdge(4, 6, 14);
+        Gu.addEdge(5, 6, 10);
+        Gu.addEdge(6, 7, 2);
+        Gu.addEdge(7, 8, 1);
+        mstEdges = Gu.MSTKruskal();
+        // check the tree
+        UnGraph<int, int> mstTree;
+        for (int i = 0; i < 9; i++) { Gu.addNode(i, i); }
+        for (auto& e: mstEdges) mstTree.addEdge(e);
+        TS_ASSERT_EQUALS(mstTree[0]->adj.size(), 1);
+        TS_ASSERT_DIFFERS(mstTree[0]->adj.find(1), mstTree[0]->adj.end());
+        TS_ASSERT_EQUALS(mstTree[1]->adj.size(), 2);
+        TS_ASSERT_DIFFERS(mstTree[1]->adj.find(2), mstTree[1]->adj.end());
+        TS_ASSERT_EQUALS(mstTree[2]->adj.size(), 4);
+        TS_ASSERT_DIFFERS(mstTree[2]->adj.find(3), mstTree[2]->adj.end());
+        TS_ASSERT_DIFFERS(mstTree[2]->adj.find(4), mstTree[2]->adj.end());
+        TS_ASSERT_DIFFERS(mstTree[2]->adj.find(6), mstTree[2]->adj.end());
+        TS_ASSERT_EQUALS(mstTree[4]->adj.size(), 2);
+        TS_ASSERT_DIFFERS(mstTree[4]->adj.find(5), mstTree[4]->adj.end());
+        TS_ASSERT_EQUALS(mstTree[6]->adj.size(), 2);
+        TS_ASSERT_DIFFERS(mstTree[6]->adj.find(7), mstTree[6]->adj.end());
+        TS_ASSERT_EQUALS(mstTree[7]->adj.size(), 2);
+        TS_ASSERT_DIFFERS(mstTree[7]->adj.find(8), mstTree[7]->adj.end());
+    }
+
+    /** case : CLRS Figure 24.4 (p652)
+     * 0:'s', 1:'t', 2:'y', 3:'x', 4:'z' 
+     * */
+    void test_bellman_ford() {
+        for (int i = 0; i < 5; i++) Gd.addNode(i, i);
+        Gd.addEdge(0, 1, 6);
+        Gd.addEdge(0, 2, 7);
+        Gd.addEdge(1, 4, -4);
+        Gd.addEdge(1, 2, 8);
+        Gd.addEdge(1, 3, 5);
+        Gd.addEdge(2, 3, -3);
+        Gd.addEdge(2, 4, 9);
+        Gd.addEdge(3, 1, -2);
+        Gd.addEdge(4, 0, 2);
+        Gd.addEdge(4, 3, 7);
+        bool res = Gd.bellmanFord(0);   
+        TS_ASSERT(res);
+        TS_ASSERT_EQUALS(Gd[0]->parent, -1);
+        TS_ASSERT_EQUALS(Gd[0]->weightedDistance, 0);
+        TS_ASSERT_EQUALS(Gd[1]->parent, 3);
+        TS_ASSERT_EQUALS(Gd[1]->weightedDistance, 2);
+        TS_ASSERT_EQUALS(Gd[2]->parent, 0);
+        TS_ASSERT_EQUALS(Gd[2]->weightedDistance, 7);
+        TS_ASSERT_EQUALS(Gd[3]->parent, 2);
+        TS_ASSERT_EQUALS(Gd[3]->weightedDistance, 4);
+        TS_ASSERT_EQUALS(Gd[4]->parent, 1);
+        TS_ASSERT_EQUALS(Gd[4]->weightedDistance, -2);
+    }
+
+    /**
+     * CLRS Figure 24.5 (p656)
+     *  0 -(1)-> 1 --(4)-> 2 --(5)-> 3
+     *            \       /
+     *         (-2)<--4<--(-4)
+     * */
+    void test_bellman_ford_neg_cycle() {
+        for (int i = 0; i < 5; i++) Gd.addNode(i, i);
+        Gd.addEdge(0, 1, 1);
+        Gd.addEdge(1, 2, 4);
+        Gd.addEdge(2, 3, 5);
+        Gd.addEdge(2, 4, -4);
+        Gd.addEdge(4, 1, -2);
+        bool res = Gd.bellmanFord(0);
+        TS_ASSERT(!res);
+    }
+
+    /**
+     * 0:'r', 1:'s', 2:'t', 3:'x', 4:'y', 5:'z'
+     * */
+    void test_dag_topsort_shortest_path() {
+        for (int i = 0; i < 6; i++) Gd.addNode(i, i);
+        Gd.addEdge(0, 1, 5);
+        Gd.addEdge(0, 2, 3);
+        Gd.addEdge(1, 2, 2);
+        Gd.addEdge(1, 3, 6);
+        Gd.addEdge(2, 3, 7);
+        Gd.addEdge(2, 4, 4);
+        Gd.addEdge(2, 5, 2);
+        Gd.addEdge(3, 4, -1);
+        Gd.addEdge(3, 5, 1);
+        Gd.addEdge(4, 5, -2);
+        Gd.dagShortestPaths(1);       
+        TS_ASSERT_EQUALS(Gd[0]->status, UNDISCOVERED);
+        TS_ASSERT_EQUALS(Gd[1]->parent, -1);
+        TS_ASSERT_EQUALS(Gd[1]->weightedDistance, 0);
+        TS_ASSERT_EQUALS(Gd[2]->parent, 1);
+        TS_ASSERT_EQUALS(Gd[2]->weightedDistance, 2);
+        TS_ASSERT_EQUALS(Gd[3]->parent, 1);
+        TS_ASSERT_EQUALS(Gd[3]->weightedDistance, 6);
+        TS_ASSERT_EQUALS(Gd[4]->parent, 3);
+        TS_ASSERT_EQUALS(Gd[4]->weightedDistance, 5);
+        TS_ASSERT_EQUALS(Gd[5]->parent, 4);
+        TS_ASSERT_EQUALS(Gd[5]->weightedDistance, 3);
+    }
+
+    /**
+     * Figure 24.6 (p659)
+     * 0:'s', 1:'t', 2:'x', 3:'y', 4:'z'
+     * */
+    void test_dijkstra() {
+        for (int i = 0; i < 5; i++) Gd.addNode(i, i);
+        Gd.addEdge(0, 1, 10);
+        Gd.addEdge(0, 3, 5);
+        Gd.addEdge(1, 2, 1);
+        Gd.addEdge(1, 3, 2);
+        Gd.addEdge(2, 4, 4);
+        Gd.addEdge(3, 1, 3);
+        Gd.addEdge(3, 2, 9);
+        Gd.addEdge(3, 4, 2);
+        Gd.addEdge(4, 0, 7);
+        Gd.addEdge(4, 2, 6);
+        Gd.dijkstra(0);
+        TS_ASSERT_EQUALS(Gd[0]->parent, -1);
+        TS_ASSERT_EQUALS(Gd[0]->weightedDistance, 0);
+        TS_ASSERT_EQUALS(Gd[1]->parent, 3);
+        TS_ASSERT_EQUALS(Gd[1]->weightedDistance, 8);
+        TS_ASSERT_EQUALS(Gd[2]->parent, 1);
+        TS_ASSERT_EQUALS(Gd[2]->weightedDistance, 9);
+        TS_ASSERT_EQUALS(Gd[3]->parent, 0);
+        TS_ASSERT_EQUALS(Gd[3]->weightedDistance, 5);
+        TS_ASSERT_EQUALS(Gd[4]->parent, 3);
+        TS_ASSERT_EQUALS(Gd[4]->weightedDistance, 7);
+    }
 };

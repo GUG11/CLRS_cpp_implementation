@@ -2,6 +2,7 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <map>
 #include <algorithm>
 #include <utility>
 #include <cassert>
@@ -16,9 +17,23 @@ struct Vertex {
     std::unordered_map<int, E> adj;
     int parent, distance;   // Parent in graph traversal, distance from the source
     int dtime, ftime;   // discover time, finish time (for DFS)
+    E weightedDistance;
     Status status;
-    Vertex(const N& d) : data(d), parent(-1), distance(-1), dtime(-1), ftime(-1) {}
+    Vertex(const N& d) : data(d), parent(-1), distance(-1), dtime(-1), ftime(-1), weightedDistance(-1) {}
     E operator [] (int id) {return adj[id];}   // G[i][j] get edge data of (i,j)
+};
+
+template<typename E>
+struct Edge {
+    int uid, vid;
+    E data;
+    Edge(int u, int v, const E& e): uid(u), vid(v), data(e) {}
+    Edge& operator= (const Edge& edge) {
+        uid = edge.uid;
+        vid = edge.vid;
+        data = edge.data;
+        return *this;
+    }
 };
 
 template <typename N, typename E>
@@ -29,6 +44,8 @@ protected:
     int time;
     void searchInit(int id);
     void DFS(int id, Visitor<N>& visitor);
+    void initializeSingleSource(int s);
+    void relax(int uid, int vid);
 public: 
     Graph(): numEdges(0), time(0) {}
     virtual ~Graph() {clear();}
@@ -140,5 +157,24 @@ void Graph<N,E>::DFS(int id, Visitor<N>& visitor) {
     visitor(V[id]->data);
     V[id]->status = VISITED;
     V[id]->ftime = ++time;
+}
+
+template <typename N, typename E>
+void Graph<N,E>::initializeSingleSource(int s) {
+    for (auto& v: V) {
+        v.second->status = UNDISCOVERED;
+        v.second->parent = -1;
+    }
+    V[s]->weightedDistance = 0;
+    V[s]->status = DISCOVERED;
+}
+
+template <typename N, typename E>
+void Graph<N,E>::relax(int uid, int vid) {
+    if (V[vid]->status == UNDISCOVERED || V[uid]->weightedDistance + (*V[uid])[vid] < V[vid]->weightedDistance) {
+        V[vid]->status = DISCOVERED;   // use status to mark infinite
+        V[vid]->parent = uid;
+        V[vid]->weightedDistance = V[uid]->weightedDistance + (*V[uid])[vid];
+    }
 }
 

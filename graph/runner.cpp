@@ -75,5 +75,41 @@ public:
  void runTest() { suite_TestGraph.test_scc(); }
 } testDescription_suite_TestGraph_test_scc;
 
+static class TestDescription_suite_TestGraph_test_mst_prim : public CxxTest::RealTestDescription {
+public:
+ TestDescription_suite_TestGraph_test_mst_prim() : CxxTest::RealTestDescription( Tests_TestGraph, suiteDescription_TestGraph, 281, "test_mst_prim" ) {}
+ void runTest() { suite_TestGraph.test_mst_prim(); }
+} testDescription_suite_TestGraph_test_mst_prim;
+
+static class TestDescription_suite_TestGraph_test_mst_kruskal : public CxxTest::RealTestDescription {
+public:
+ TestDescription_suite_TestGraph_test_mst_kruskal() : CxxTest::RealTestDescription( Tests_TestGraph, suiteDescription_TestGraph, 319, "test_mst_kruskal" ) {}
+ void runTest() { suite_TestGraph.test_mst_kruskal(); }
+} testDescription_suite_TestGraph_test_mst_kruskal;
+
+static class TestDescription_suite_TestGraph_test_bellman_ford : public CxxTest::RealTestDescription {
+public:
+ TestDescription_suite_TestGraph_test_bellman_ford() : CxxTest::RealTestDescription( Tests_TestGraph, suiteDescription_TestGraph, 360, "test_bellman_ford" ) {}
+ void runTest() { suite_TestGraph.test_bellman_ford(); }
+} testDescription_suite_TestGraph_test_bellman_ford;
+
+static class TestDescription_suite_TestGraph_test_bellman_ford_neg_cycle : public CxxTest::RealTestDescription {
+public:
+ TestDescription_suite_TestGraph_test_bellman_ford_neg_cycle() : CxxTest::RealTestDescription( Tests_TestGraph, suiteDescription_TestGraph, 392, "test_bellman_ford_neg_cycle" ) {}
+ void runTest() { suite_TestGraph.test_bellman_ford_neg_cycle(); }
+} testDescription_suite_TestGraph_test_bellman_ford_neg_cycle;
+
+static class TestDescription_suite_TestGraph_test_dag_topsort_shortest_path : public CxxTest::RealTestDescription {
+public:
+ TestDescription_suite_TestGraph_test_dag_topsort_shortest_path() : CxxTest::RealTestDescription( Tests_TestGraph, suiteDescription_TestGraph, 406, "test_dag_topsort_shortest_path" ) {}
+ void runTest() { suite_TestGraph.test_dag_topsort_shortest_path(); }
+} testDescription_suite_TestGraph_test_dag_topsort_shortest_path;
+
+static class TestDescription_suite_TestGraph_test_dijkstra : public CxxTest::RealTestDescription {
+public:
+ TestDescription_suite_TestGraph_test_dijkstra() : CxxTest::RealTestDescription( Tests_TestGraph, suiteDescription_TestGraph, 436, "test_dijkstra" ) {}
+ void runTest() { suite_TestGraph.test_dijkstra(); }
+} testDescription_suite_TestGraph_test_dijkstra;
+
 #include <cxxtest/Root.cpp>
 const char* CxxTest::RealWorldDescription::_worldName = "cxxtest";
